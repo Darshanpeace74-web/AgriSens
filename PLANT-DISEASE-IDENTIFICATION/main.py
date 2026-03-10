@@ -854,10 +854,21 @@ If a user uploads an image, analyze it for signs of crop disease, nutrient defic
         label_visibility="collapsed",
     )
 
+    # Track whether this specific image was already processed
+    if "_last_img_id" not in st.session_state:
+        st.session_state._last_img_id = None
+
+    # Determine if this is a NEW image (not already processed)
+    new_image = False
+    if uploaded_img is not None:
+        img_id = (uploaded_img.name, uploaded_img.size)
+        if img_id != st.session_state._last_img_id:
+            new_image = True
+
     # ── Chat input ──
     user_input = st.chat_input("Describe a crop issue, ask for advice, or upload an image...")
 
-    if user_input or uploaded_img:
+    if user_input or new_image:
         # Build the user message text
         display_text = user_input if user_input else "Please analyze this crop image."
 
@@ -1017,6 +1028,11 @@ If a user uploads an image, analyze it for signs of crop disease, nutrient defic
             full_response = model_diagnosis_card + "\n\n---\n\n"
         full_response += bot_text
         st.session_state.agribot_messages.append({"role": "assistant", "content": full_response})
+
+        # Mark this image as processed so it doesn't re-trigger on rerun
+        if uploaded_img is not None:
+            st.session_state._last_img_id = (uploaded_img.name, uploaded_img.size)
+
         st.rerun()
 
 
