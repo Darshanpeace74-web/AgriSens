@@ -1,5 +1,4 @@
-streamlit
-tensorflow==2.15.1
+tensorflow-cpu
 numpy<2.0
 Pillow
 requests
