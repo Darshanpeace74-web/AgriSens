@@ -1,6 +1,5 @@
-numpy
 streamlit
-tensorflow
-keras
+tensorflow-cpu
+numpy
 Pillow
 requests
